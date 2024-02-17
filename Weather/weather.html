@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="enter city name" spellcheck="false">
+            <button><img src="https://uxwing.com/wp-content/themes/uxwing/download/user-interface/search-icon.png" alt="search" style="height: 40px;width:40px "></button> 
+        </div>
+        <div class="error">
+            <p>Invalid city name</p>
+        </div>
+        <div class="weather">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_lf4utC7CJroi1Hvr6VnhC5I1ylJi6mCb6g&usqp=CAU" class="weather-icon">
+            <h1 class="temp">22°C</h1>
+            <h2 class="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-SSyejizUud_rRzN0MJy5moCoZXMiwyuEiw&usqp=CAU" style="height: 70px;width:100px">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVI58tp-NCk-oEFo4sh92CNA3-bBXkUw5ZzuR5TJvgvBwF4bBz4oR3J0rAg4i_Q1RC7bo&usqp=CAU" style="height: 70px;width:100px ">
+                    <div>
+                        <p class="wind">15 km/hr</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "e4c8b35fbf61ea5429ceb97d1d731cfd";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        const weatherIcon = document.querySelector(".weather-icon");
+
+        async function checkWeather(city) {
+            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+
+            if (response.status == 404) {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".weather").style.display = "none";
+            } else {
+                const data = await response.json();
+
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + "km/h";
+
+                // Update weather icon based on weather condition
+                updateWeatherIcon(data.weather[0].main);
+
+                // Show weather card and hide error
+                document.querySelector(".weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+            }
+        }
+
+        // function updateWeatherIcon(weatherCondition) {
+        //     const weatherIconSrc = "https://tse1.mm.bing.net/th?id=OIP.${getWeatherImageId(weatherCondition)}&pid=Api&P=0&h=180";
+        //     weatherIcon.src = weatherIconSrc;
+        // }
+
+        
+        function updateWeatherIcon(weatherCondition) {
+          const weatherImages = {
+            clouds: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRMj1c1VGS8O4woG0_VO0vGklwORYbB3VTMg&usqp=CAU",
+            clear: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCnkEZGR0SIx5BOR5m8fgnkLGhi8sgQ8wrUw&usqp=CAU",
+            rain: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_lf4utC7CJroi1Hvr6VnhC5I1ylJi6mCb6g&usqp=CAU",
+            drizzle: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX4RZtKlOnOtS4RzSbL0JWnWM467K1uv2vaA&usqp=CAU",
+            mist: "https://images.photowall.com/products/51422/norwegian-mist.jpg?h=699&q=85",
+          };
+          const defaultImage = "https://img.freepik.com/premium-photo/blue-sky-with-sun_87394-4971.jpg";
+
+           // Get the image URL based on the weather condition
+          const weatherIconSrc = weatherImages[weatherCondition.toLowerCase()] || defaultImage;
+
+          // Set the image source
+          weatherIcon.src = weatherIconSrc;
+        }
+
+
+        // function getWeatherImageId(weatherCondition) {
+        //     // Map each weather condition to a specific image ID
+        //     const weatherImages = {
+        //         clouds: "kay-to851M-0ujlmpgnPgAHaFC",
+        //         clear: "1BNXPq-fvc31m6BjtcPBngHaE8",
+        //         rain: "nX5pnQxG3pc9ZHizFdW2SgHaEK",
+        //         drizzle: "YrRPH3EAQbiwZdO14bbVDAHaFE",
+        //         mist: "8KdffgUX64aGGBuKSH7AfwHaE8",
+        //     };
+
+        //     // Default to a generic weather image if the condition is not in the map
+        //     return weatherImages[weatherCondition.toLowerCase()] || "nX5pnQxG3pc9ZHizFdW2SgHaEK";
+        // }
+        
+
+        // function updateWeatherIcon(weatherCondition) {
+        //    const weatherIconSrc = `https://tse1.mm.bing.net/th?id=OIP.${getWeatherImageId(weatherCondition)}&pid=Api&P=0&h=180`;
+        //    weatherIcon.src = weatherIconSrc;
+        // }
+
+
+        // function getWeatherImageId(weatherCondition) {
+        //     // Map each weather condition to a specific image ID
+        //     const weatherImages = {
+        //       clouds: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRMj1c1VGS8O4woG0_VO0vGklwORYbB3VTMg&usqp=CAU",
+        //       clear: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCnkEZGR0SIx5BOR5m8fgnkLGhi8sgQ8wrUw&usqp=CAU",
+        //       rain: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_lf4utC7CJroi1Hvr6VnhC5I1ylJi6mCb6g&usqp=CAU",
+        //       drizzle: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX4RZtKlOnOtS4RzSbL0JWnWM467K1uv2vaA&usqp=CAU",
+        //       mist: "https://images.photowall.com/products/51422/norwegian-mist.jpg?h=699&q=85",
+        //     };
+
+        //     // Default to a generic weather image if the condition is not in the map
+        //     return weatherImages[weatherCondition.toLowerCase()] || "nX5pnQxG3pc9ZHizFdW2SgHaEK";
+        // }
+
+
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+        });
+    </script>
+    
+</body>
+</html>
